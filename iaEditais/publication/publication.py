@@ -1,7 +1,9 @@
-import streamlit as st
-from streamlit_pdf_viewer import pdf_viewer
-from hooks import taxonomy, publication as order
 from datetime import datetime
+
+import streamlit as st
+from hooks import publication as order
+from hooks import taxonomy
+from streamlit_pdf_viewer import pdf_viewer
 
 
 def main():
