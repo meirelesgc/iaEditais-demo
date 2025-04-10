@@ -1,0 +1,11 @@
+services:
+  fiotec-streamlit:
+    image: fiotec-streamlit
+    container_name: fiotec-streamlit
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - POETRY_VIRTUALENVS_CREATE=false
