@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 import httpx
 import streamlit as st
 from config import Settings
@@ -6,8 +8,9 @@ from config import Settings
 def post_order(name, typification):
     typification = [t['id'] for t in typification]
     data = {'name': name, 'typification': typification}
-    httpx.post(f'{Settings().API}/doc/', json=data, verify=False)
-    st.rerun()
+    response = httpx.post(f'{Settings().API}/doc/', json=data, verify=False)
+    if response.status_code == HTTPStatus.CREATED:
+        return response.json()
 
 
 def get_order():
