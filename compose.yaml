@@ -2,6 +2,7 @@ services:
   fiotec-streamlit:
     image: fiotec-streamlit
     container_name: fiotec-streamlit
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
