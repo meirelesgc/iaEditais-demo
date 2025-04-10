@@ -37,20 +37,37 @@ def main():
                 status.update(label='Analise concluida!', state='complete')
 
     def show_release(r):
-        for t in r['taxonomy']:
-            st.caption('🧵 Tipificação:')
-            st.caption(t['name'])
-            for tx in t['taxonomy']:
-                st.write('🪢 Taxonomia:')
-                st.caption(tx['title'])
+        tabs = st.tabs([f'🧵 {t["name"]}' for t in r['taxonomy']])
+
+        for idx, (tab, t) in enumerate(zip(tabs, r['taxonomy'])):
+            with tab:
+                key = f'taxonomy_index_{idx}'
+                if key not in st.session_state:
+                    st.session_state[key] = 0
+
+                current_index = st.session_state[key]
+                tx = t['taxonomy'][current_index]
+
+                st.subheader(f'🪢 {tx["title"]}')
                 for br in tx['branch']:
-                    st.write('🪡 Ramo:')
-                    st.caption(br['title'])
+                    st.caption(f'🪡 {br["title"]}')
                     emote = '✅' if br['evaluate']['fulfilled'] else '❌'
-                    st.write(f'Descrição: {br["description"]}')
                     st.write(f'Critério cumprido: {emote}')
                     st.write(f'Feedback: {br["evaluate"]["feedback"]}')
                     st.divider()
+                col1, col2 = st.columns(2)
+                with col1:
+                    if (
+                        st.button('◀️ Anterior', key=f'prev_{idx}')
+                        and current_index > 0
+                    ):
+                        st.session_state[key] -= 1
+                with col2:
+                    if (
+                        st.button('Próximo ▶️', key=f'next_{idx}')
+                        and current_index < len(t['taxonomy']) - 1
+                    ):
+                        st.session_state[key] += 1
 
     st.header('📊 Gestão de Editais')
     st.divider()
@@ -102,8 +119,8 @@ def main():
                     input=order.get_release_file(r['id']),
                     key=f'pdf_viewer_{r["id"]}',
                     width='100%',
-                    height=1200,
+                    height=800,
                 )
             with col2:
-                with st.container(height=1200):
+                with st.container(height=800):
                     show_release(r)
