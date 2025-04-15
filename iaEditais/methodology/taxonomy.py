@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import streamlit as st
 from hooks import source, taxonomy
-from datetime import datetime
 
 
 def main():
@@ -67,7 +68,7 @@ def main():
     st.divider()
 
     st.subheader('🧵 Tipificação:')
-
+    typifications.sort(key=lambda x: x['created_at'])
     t = st.selectbox(
         '🧵 Tipificações:',
         options=typifications,

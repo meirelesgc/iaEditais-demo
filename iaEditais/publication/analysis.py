@@ -45,27 +45,22 @@ def show_release(r):
     tabs = st.tabs([f'🧵 {t["name"]}' for t in r['taxonomy']])
 
     for tab_index, (tab, t) in enumerate(zip(tabs, r['taxonomy'])):
-        # Usa um índice separado para cada aba
         tab_key = f'taxonomy_index_{tab_index}'
 
         if tab_key not in st.session_state:
             st.session_state[tab_key] = 0
 
         with tab:
-            # Processa os botões de navegação ANTES de renderizar o conteúdo
             container = st.container()
             a, b, c = container.columns([1, 5, 1])
 
-            # Verifica se existem itens na taxonomia
             if not t['taxonomy']:
                 st.write('Não há itens de taxonomia disponíveis.')
                 continue
 
-            # Garante que o índice é válido
             current_index = st.session_state[tab_key]
             current_index = min(current_index, len(t['taxonomy']) - 1)
 
-            # Botões de navegação
             disabled_next = current_index >= len(t['taxonomy']) - 1
             next_button = c.button(
                 '➡️ Proximo',
@@ -80,16 +75,14 @@ def show_release(r):
                 key=f'prev_{tab_index}_{current_index}',
             )
 
-            # Processa os cliques IMEDIATAMENTE
             if next_button and not disabled_next:
                 st.session_state[tab_key] = current_index + 1
-                st.rerun()  # Força o Streamlit a reexecutar
+                st.rerun()
 
             if prev_button and not disabled_back:
                 st.session_state[tab_key] = current_index - 1
-                st.rerun()  # Força o Streamlit a reexecutar
+                st.rerun()
 
-            # Agora renderiza o conteúdo atual
             tx = t['taxonomy'][current_index]
 
             b.subheader(f'🪢 {tx["title"]}')
@@ -107,6 +100,7 @@ def main():
         st.error('Nenhum edital encontrado.')
         return
 
+    orders.sort(key=lambda x: x['created_at'], reverse=True)
     o = st.selectbox(
         'Selecione o edital',
         options=orders,

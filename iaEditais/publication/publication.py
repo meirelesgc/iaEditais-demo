@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import pandas as pd
 import streamlit as st
 from hooks import publication as order
 from hooks import taxonomy
@@ -16,20 +15,30 @@ def format_date(date_str):
 @st.dialog('Adicionar Edital', width='large')
 def create_order():
     typifications = taxonomy.get_typifications()
+    oldest_typification = min(typifications, key=lambda t: t['created_at'])
+
     with st.form(key='create_order_form'):
         name = st.text_input('Nome do edital')
-        type = st.multiselect(
+        _type = st.multiselect(
             'Tipo do edital',
             options=typifications,
+            default=[oldest_typification],
             format_func=lambda t: t['name'],
         )
         uploaded_file = st.file_uploader('Escolha um arquivo PDF', type='pdf')
-        if st.form_submit_button('Adicionar Edital') and uploaded_file:
-            ord = order.post_order(name, type)
-            st.success('Edital criado com sucesso!')
-            with st.status('Analisando versão...', expanded=True) as status:
-                order.post_release(uploaded_file, ord['id'])
-                status.update(label='Analise concluida!', state='complete')
+        if st.form_submit_button('Adicionar Edital'):
+            if not _type:
+                st.warning('Selecione pelo menos um tipo de edital.')
+            elif not uploaded_file:
+                st.warning('É necessário anexar a primeira versão do edital.')
+            else:
+                ord = order.post_order(name, _type)
+                st.success('Edital criado com sucesso!')
+                with st.status(
+                    'Analisando versão...', expanded=True
+                ) as status:
+                    order.post_release(uploaded_file, ord['id'])
+                    status.update(label='Analise concluida!', state='complete')
 
 
 @st.dialog('Adicionar Versão', width='large')
@@ -82,25 +91,29 @@ def main():
         create_order()
 
     orders = order.get_order()
+    typifications = taxonomy.get_typifications()
+
     if not orders:
         st.error('Nenhum edital encontrado.')
         return
 
-    typifications = taxonomy.get_typifications()
+    for index, o in enumerate(orders):
+        container = st.container()
+        a, b = container.columns([6, 1])
+        a.subheader(f'{index + 1} - {o["name"]}')
 
-    data = []
+        b_key = f'exclude_{o["id"]}'
+        if b.button('🗑️ Excluir', key=b_key, use_container_width=True):
+            order.delete_order(o['id'])
 
-    for o in orders:
-        related_typs = [
-            ty['name'] for ty in typifications if ty['id'] in o['typification']
-        ]
-
-        data.append({
-            'Ordem': o['name'],
-            'Tipificações': '; '.join(related_typs)
-            if related_typs
-            else 'Nenhuma',
-        })
-
-    df = pd.DataFrame(data)
-    st.table(df)
+        with st.expander('Detalhes'):
+            ty = ', '.join([
+                t.get('name')
+                for t in typifications
+                if t.get('id') in o.get('typification')
+            ])
+            st.subheader(f'Tipificações: {ty}')
+            st.subheader(f'Criado em: {format_date(o["created_at"])}')
+            st.subheader(
+                f'Atualizado em: {format_date(o["updated_at"]) if o["updated_at"] else "N/A"}'
+            )

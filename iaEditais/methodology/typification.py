@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import streamlit as st
 from hooks import source, taxonomy
-from datetime import datetime
 
 
 def main():
@@ -49,7 +50,27 @@ def main():
 
     if not typifications:
         st.error('Nenhuma tipificação encontrada.')
+        return
 
+    typifications.sort(key=lambda x: x['created_at'])
+
+    t = typifications.pop(0)
+
+    container = st.container()
+    a, b, c = container.columns([5, 1, 1])
+    a.subheader(f'{t["name"]}')
+
+    with st.expander('Detalhes'):
+        st.subheader(
+            f'Fontes: {", ".join([s["name"] for s in source_list if s["id"] in t["source"]])}'
+        )
+        st.subheader(f'Criado em: {format_date(t["created_at"])}')
+        st.subheader(
+            f'Atualizado em: {format_date(t["updated_at"]) if t["updated_at"] else "N/A"}'
+        )
+
+    st.divider()
+    typifications.sort(key=lambda x: x['created_at'], reverse=True)
     for index, t in enumerate(typifications):
         container = st.container()
         a, b, c = container.columns([5, 1, 1])

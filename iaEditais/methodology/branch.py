@@ -1,7 +1,7 @@
-import streamlit as st
-
-from hooks import taxonomy
 from datetime import datetime
+
+import streamlit as st
+from hooks import taxonomy
 
 
 def main():
@@ -62,6 +62,8 @@ def main():
 
     st.header('🪡 Gestão de Ramos')
     st.divider()
+
+    typifications.sort(key=lambda x: x['created_at'])
 
     st.subheader('🧵 Tipificação:')
     t = st.selectbox(
