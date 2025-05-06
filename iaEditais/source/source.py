@@ -23,6 +23,20 @@ def main():
             if name and description:
                 source.post_source(name, description, file)
 
+    @st.dialog('➕ Editar Fonte', width='large')
+    def edit_source(s):
+        s['name'] = st.text_input('Nome da fonte', value=s['name'])
+        s['description'] = st.text_area(
+            'Descrição da fonte', value=s['description']
+        )
+        file = st.file_uploader('Escolha um arquivo PDF', type='pdf')
+        if st.button('Enviar'):
+            if s['name'] and s['description']:
+                if file:
+                    s['has_file'] = True
+                    source.put_source_file(s, file)
+                source.put_source(s)
+
     source_list = sorted(
         source.get_source(),
         key=lambda s: s['created_at'],
@@ -41,10 +55,17 @@ def main():
 
     for index, s in enumerate(source_list):
         container = st.container()
-        a, b = container.columns([6, 1])
+        a, b, c = container.columns([4, 1, 1])
 
         a.subheader(f'{index + 1} - {s["name"]}')
+
         if b.button(
+            '✏️ Editar',
+            key=f'edit_{s["id"]}',
+            use_container_width=True,
+        ):
+            edit_source(s)
+        if c.button(
             '🗑️ Excluir', key=f'exclude_{s["id"]}', use_container_width=True
         ):
             source.delete_source(s['id'])
@@ -55,6 +76,7 @@ def main():
             st.subheader(
                 f'Atualizado em: {format_date(s["updated_at"]) if s["updated_at"] else "N/A"}'
             )
+            print(s['has_file'])
             if s['has_file']:
                 pdf_viewer(
                     input=source.get_source_file(s['id']),

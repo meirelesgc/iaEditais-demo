@@ -41,3 +41,16 @@ def post_source(name, description, uploaded_file):
 def delete_source(source_id):
     httpx.delete(f'{Settings().API}/source/{source_id}/', verify=False)
     st.rerun()
+
+
+def put_source(source):
+    httpx.put(f'{Settings().API}/source/', json=source, verify=False)
+    st.rerun()
+
+
+def put_source_file(source, file):
+    files = {'file': (file.name, file, 'application/pdf')}
+    httpx.put(
+        f'{Settings().API}/source/{source["id"]}/', files=files, verify=False
+    )
+    st.rerun()
