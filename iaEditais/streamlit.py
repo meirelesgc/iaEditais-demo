@@ -46,61 +46,66 @@ pages_2 = {
 
 
 def home():
-    st.title('Bem-vindo ao iaEditais! ✨')
-
-    st.subheader(
-        '🔍 Uma Plataforma Inteligente para Avaliação de Editais Públicos'
+    _, center, _ = st.columns([1, 2, 1])
+    center.markdown(
+        "<h1 style='text-align: center;'>🚀 Plataforma de Avaliação de Editais</h1>",
+        unsafe_allow_html=True,
     )
+    center.caption('🔖 Versão 1.3.0')
 
-    st.info(
+    center.markdown(
         """
-        O **iaEditais** utiliza o poder da Inteligência Artificial para transformar a maneira como órgãos públicos e empresas interagem com editais de contratação. 
-        Nossa plataforma foi cuidadosamente desenvolvida para oferecer:
-        - **Precisão Aprimorada:** Identificação automática de erros e inconsistências.
-        - **Conformidade Garantida:** Alinhamento com as legislações e regulamentos vigentes.
-        - **Eficiência Operacional:** Redução do tempo gasto na elaboração e revisão de documentos.
-        - **Transparência Reforçada:** Processos licitatórios mais claros e acessíveis.
-        """
+        <div style='text-align: justify; font-size: 1.1em;'>
+        👋 <strong>Bem-vindo ao iaEditais!</strong><br><br>
+        Esta é uma prova de conceito inovadora que utiliza Inteligência Artificial para auxiliar na <strong>elaboração</strong> e <strong>verificação automática</strong> de editais de contratação pública.
+        Nosso objetivo é oferecer mais <strong>precisão</strong>, <strong>padronização</strong> e <strong>eficiência</strong> ao processo de construção e revisão de documentos oficiais.
+        </div>
+    """,
+        unsafe_allow_html=True,
     )
-
-    st.title('Por que usar o iaEditais?')
-
-    st.markdown(
-        """
-        A complexidade do cenário regulatório brasileiro exige ferramentas inteligentes para otimizar a gestão de editais. 
-        Com o **iaEditais**, você não apenas simplifica o processo, mas também eleva o nível de qualidade e segurança de suas licitações.
-        """
-    )
-    st.empty()
-    if st.button(
-        '📚 Explore a Base de Conhecimento', use_container_width=True
-    ):
-        st.session_state['page_loaded'] = 'knowledge'
-        st.rerun()
-        st.switch_page('source')
-    st.divider()
-    if st.button(
-        '🧠 Inicie a Verificação de Editais', use_container_width=True
-    ):
-        st.session_state['page_loaded'] = 'verification'
-        st.rerun()
-        st.switch_page('order')
 
     st.divider()
+
     st.markdown(
-        '💡 Caso tenha dúvidas ou precise de suporte, entre em contato com nossa equipe através do canal oficial de atendimento.'
+        "<h2 style='text-align: center;'>🧭 Escolha uma funcionalidade para começar</h2>",
+        unsafe_allow_html=True,
     )
+    st.markdown('<br>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('### 📚 Base de Conhecimento')
+        st.markdown("""
+            Acesse uma coleção estruturada de normas, critérios e boas práticas usadas na avaliação de editais.  
+            Utilize a árvore de conhecimento 🌳 do iaEditais para navegar pelos tópicos de forma lógica e orientada.
+        """)
+        if st.button('🔍 Explorar Base', use_container_width=True):
+            st.session_state['page_loaded'] = 'knowledge'
+            st.rerun()
+            st.switch_page('source')
+
+    with col2:
+        st.markdown('### 🤖 Verificação Automatizada')
+        st.markdown("""
+            Faça upload de um edital e receba uma análise inteligente, com identificação de potenciais inconsistências, lacunas e oportunidades de melhoria.  
+            Aproveite o poder da IA para revisões mais seguras e rápidas. ⚡
+        """)
+        if st.button('✅ Iniciar Verificação', use_container_width=True):
+            st.session_state['page_loaded'] = 'verification'
+            st.rerun()
+            st.switch_page('order')
+
+    st.divider()
     st.markdown(
-        '🤝 Aproveite os recursos do iaEditais para transformar a gestão de editais e elevar os padrões de eficiência e conformidade na administração pública.'
+        "<p style='text-align: center; color: gray;'>Desenvolvido com ❤️ por iaEditais - Transformando o futuro das compras públicas</p>",
+        unsafe_allow_html=True,
     )
 
 
 if 'page_loaded' not in st.session_state:
-    st.navigation(
-        [st.Page(home, title='Principal', url_path='home')], expanded=False
-    ).run()
-
-
+    home_page = [st.Page(home, title='Principal', url_path='home')]
+    st.navigation(home_page, expanded=False).run()
 elif st.session_state['page_loaded'] == 'knowledge':
     st.navigation(pages_1).run()
 elif st.session_state['page_loaded'] == 'verification':
