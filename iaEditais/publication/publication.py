@@ -37,17 +37,16 @@ def create_order():
                 with st.status(
                     'Analisando versão...', expanded=True
                 ) as status:
-                    order.post_release(uploaded_file, ord['id'])
-                    status.update(label='Analise concluida!', state='complete')
-
-
-@st.dialog('Adicionar Versão', width='large')
-def create_release(ord):
-    uploaded_file = st.file_uploader('Escolha um arquivo PDF', type='pdf')
-    if st.button('Enviar arquivo') and uploaded_file:
-        with st.status('Analisando versão...', expanded=True) as status:
-            order.post_release(uploaded_file, ord['id'])
-            status.update(label='Analise concluida!', state='complete')
+                    success = order.post_release(uploaded_file, ord['id'])
+                    if success:
+                        status.update(
+                            label='Analise concluida!', state='complete'
+                        )
+                    else:
+                        status.update(
+                            label='Tivemos um problema!', state='error'
+                        )
+                        order.delete_order(ord['id'])
 
 
 def show_release(r):

@@ -13,32 +13,18 @@ def format_date(date_str):
     return None
 
 
-@st.dialog('Adicionar Edital', width='large')
-def create_order():
-    typifications = taxonomy.get_typifications()
-    with st.form(key='create_order_form'):
-        name = st.text_input('Nome do edital')
-        type = st.multiselect(
-            'Tipo do edital',
-            options=typifications,
-            format_func=lambda t: t['name'],
-        )
-        uploaded_file = st.file_uploader('Escolha um arquivo PDF', type='pdf')
-        if st.form_submit_button('Adicionar Edital') and uploaded_file:
-            ord = order.post_order(name, type)
-            st.success('Edital criado com sucesso!')
-            with st.status('Analisando versão...', expanded=True) as status:
-                order.post_release(uploaded_file, ord['id'])
-                status.update(label='Analise concluida!', state='complete')
-
-
 @st.dialog('Adicionar Versão', width='large')
 def create_release(ord):
     uploaded_file = st.file_uploader('Escolha um arquivo PDF', type='pdf')
     if st.button('Enviar arquivo') and uploaded_file:
         with st.status('Analisando versão...', expanded=True) as status:
-            order.post_release(uploaded_file, ord['id'])
-            status.update(label='Analise concluida!', state='complete')
+            success = order.post_release(uploaded_file, ord['id'])
+            if success:
+                print('entrei em 1')
+                status.update(label='Analise concluida!', state='complete')
+                print('entrei em 2')
+            else:
+                status.update(label='Tivemos um problema!', state='error')
 
 
 def show_release(r):

@@ -37,8 +37,25 @@ def get_release(order_id):
 
 def post_release(uploaded_file, order_id):
     files = {'file': (uploaded_file.name, uploaded_file, 'application/pdf')}
-    httpx.post(f'{Settings().API}/doc/{order_id}/release/', files=files, timeout=2000, verify=False)  # fmt: skip
-    st.rerun()
+    response = httpx.post(
+        f'{Settings().API}/doc/{order_id}/release/',
+        files=files,
+        timeout=2000,
+        verify=False,
+    )
+    if response.status_code == HTTPStatus.UNSUPPORTED_MEDIA_TYPE:
+        st.error(
+            'Erro: o formato do arquivo não é suportado. Por favor, envie um arquivo PDF válido.'
+        )
+        return False
+    elif response.status_code >= HTTPStatus.BAD_REQUEST:
+        st.error(
+            f'Erro ao fazer upload do arquivo. Código: {response.status_code}'
+        )
+        return False
+    else:
+        st.rerun()
+        return True
 
 
 def delete_release(release_id):
