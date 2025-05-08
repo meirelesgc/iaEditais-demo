@@ -104,8 +104,7 @@ def home():
 
 
 if 'page_loaded' not in st.session_state:
-    home_page = [st.Page(home, title='Principal', url_path='home')]
-    st.navigation(home_page, expanded=False).run()
+    home()
 elif st.session_state['page_loaded'] == 'knowledge':
     st.navigation(pages_1).run()
 elif st.session_state['page_loaded'] == 'verification':
