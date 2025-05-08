@@ -13,11 +13,6 @@ st.set_page_config(
 st.logo('storage/logo.png', size='large')
 
 
-def reset_to_home():
-    st.session_state.pop('page_loaded', None)
-    st.rerun()
-
-
 pages_1 = {
     'Base de conhecimento': [
         st.Page(source.main, title='Fontes', url_path='source'),
@@ -26,10 +21,7 @@ pages_1 = {
         ),
         st.Page(taxonomy.main, title='Taxonomia', url_path='taxonomy'),
         st.Page(branch.main, title='Ramos', url_path='branch'),
-    ],
-    'Voltar ao início': [
-        st.Page(reset_to_home, title='🔙 Voltar ao início', url_path='reset')
-    ],
+    ]
 }
 
 pages_2 = {
@@ -38,10 +30,7 @@ pages_2 = {
         st.Page(
             analysis.main, title='Análise através de IA', url_path='analysis'
         ),
-    ],
-    'Voltar ao início': [
-        st.Page(reset_to_home, title='🔙 Voltar ao início', url_path='reset')
-    ],
+    ]
 }
 
 
@@ -103,9 +92,29 @@ def home():
     )
 
 
+def nada():
+    st.empty()
+
+
 if 'page_loaded' not in st.session_state:
     home()
+    home_page = [st.Page(nada, title='Principal', url_path='home')]
+    st.navigation(home_page, expanded=False).run()
 elif st.session_state['page_loaded'] == 'knowledge':
+    if st.sidebar.button('⬅ Voltar à Página Inicial'):
+        st.session_state.pop('page_loaded', None)
+        st.rerun()
     st.navigation(pages_1).run()
 elif st.session_state['page_loaded'] == 'verification':
+    if st.sidebar.button('⬅ Voltar à Página Inicial'):
+        st.session_state.pop('page_loaded', None)
+        st.rerun()
     st.navigation(pages_2).run()
+
+# if 'page_loaded' not in st.session_state:
+#     home_page = [st.Page(home, title='Principal', url_path='home')]
+#     st.navigation(home_page, expanded=False).run()
+# elif st.session_state['page_loaded'] == 'knowledge':
+#     st.navigation(pages_1).run()
+# elif st.session_state['page_loaded'] == 'verification':
+#     st.navigation(pages_2).run()
