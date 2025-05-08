@@ -42,6 +42,24 @@ def main():
             t['source'] = [s['id'] for s in selected_sources]
             taxonomy.put_typification(t)
 
+    @st.dialog('Atualizar Tipificação', width='large')
+    def update_typification_2(t):
+        name = st.text_input('🧵 Nome:', value=t['name'], disabled=True)
+        selected_sources = st.multiselect(
+            '📌 Fontes:',
+            options=source_list,
+            format_func=lambda x: x['name'],
+            default=[s for s in source_list if s['id'] in t['source']],
+        )
+
+        if st.button(
+            '✏️ Atualizar',
+            key=f'update_{t["id"]}_externo',
+        ):
+            t['name'] = name
+            t['source'] = [s['id'] for s in selected_sources]
+            taxonomy.put_typification(t)
+
     st.header('🧵 Gestão de Tipificações')
 
     st.divider()
@@ -57,9 +75,14 @@ def main():
     t = typifications.pop(0)
 
     container = st.container()
-    a, b, c = container.columns([5, 1, 1])
+    a, b = container.columns([5, 2])
     a.subheader(f'{t["name"]}')
-
+    if b.button(
+        '✏️ Atualizar',
+        key=f'update_{t["id"]}',
+        use_container_width=True,
+    ):
+        update_typification_2(t)
     with st.expander('Detalhes'):
         st.subheader(
             f'Fontes: {", ".join([s["name"] for s in source_list if s["id"] in t["source"]])}'
