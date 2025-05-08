@@ -20,7 +20,6 @@ def get_order():
 
 def delete_order(order_id):
     httpx.delete(f'{Settings().API}/doc/{order_id}/', verify=False)
-    st.rerun()
 
 
 def get_detailed_order(order_id):

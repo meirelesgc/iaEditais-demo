@@ -104,6 +104,7 @@ def main():
         b_key = f'exclude_{o["id"]}'
         if b.button('🗑️ Excluir', key=b_key, use_container_width=True):
             order.delete_order(o['id'])
+            st.rerun()
 
         with st.expander('Detalhes'):
             ty = ', '.join([

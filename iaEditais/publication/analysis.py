@@ -2,7 +2,6 @@ from datetime import datetime
 
 import streamlit as st
 from hooks import publication as order
-from hooks import taxonomy
 from streamlit_pdf_viewer import pdf_viewer
 
 
@@ -20,9 +19,7 @@ def create_release(ord):
         with st.status('Analisando versão...', expanded=True) as status:
             success = order.post_release(uploaded_file, ord['id'])
             if success:
-                print('entrei em 1')
                 status.update(label='Analise concluida!', state='complete')
-                print('entrei em 2')
             else:
                 status.update(label='Tivemos um problema!', state='error')
 
@@ -95,6 +92,7 @@ def main():
 
     if st.button('🗑️ Excluir', use_container_width=True):
         order.delete_order(o['id'])
+        st.rerun()
 
     if st.button(
         '➕ Adicionar Versão',
