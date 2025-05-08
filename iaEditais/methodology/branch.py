@@ -82,7 +82,7 @@ def main():
         label_visibility='collapsed',
     )
     if st.button(
-        '➕ Adicionar', use_container_width=True, disabled=not bool(tx)
+        '➕ Adicionar', use_container_width=True, disabled=not bool(t)
     ):
         add_branch(tx, t)
 

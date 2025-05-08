@@ -76,7 +76,6 @@ def main():
             st.subheader(
                 f'Atualizado em: {format_date(s["updated_at"]) if s["updated_at"] else "N/A"}'
             )
-            print(s['has_file'])
             if s['has_file']:
                 pdf_viewer(
                     input=source.get_source_file(s['id']),
